@@ -53,6 +53,8 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
+
+                //hklhkkhkkllkl
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
