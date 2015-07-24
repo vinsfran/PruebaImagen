@@ -1,5 +1,6 @@
 package py.gov.mca.pruebaimagen;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Date;
 
@@ -16,6 +17,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +30,7 @@ public class MainActivity extends ActionBarActivity {
     final private int CAPTURE_IMAGE = 2;
     ImageView imgView;
     private String imgPath;
+    private Bitmap photobmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +75,7 @@ public class MainActivity extends ActionBarActivity {
                 public void onClick(DialogInterface dialog, int which) {
 
                     final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT,setImageUri());
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, setImageUri());
                     startActivityForResult(intent, CAPTURE_IMAGE);
 
                 }
@@ -114,14 +117,34 @@ public class MainActivity extends ActionBarActivity {
         if (resultCode != Activity.RESULT_CANCELED) {
             if (requestCode == PICK_IMAGE) {
                 selectedImagePath = getAbsolutePath(data.getData());
-                imgView.setImageBitmap(decodeFile(selectedImagePath));
+                photobmp = BitmapFactory.decodeFile(selectedImagePath);
+                imgView.setImageBitmap(photobmp);
+
+                //Codifica la imagen con Base64
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                photobmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                //Se ejecuta en segundo plano para no colgar la aplicacion
+                System.out.println("IMA BYT " + encodedImage);
+
             } else if (requestCode == CAPTURE_IMAGE) {
                 selectedImagePath = getImagePath();
-                imgView.setImageBitmap(decodeFile(selectedImagePath));
+                photobmp = BitmapFactory.decodeFile(selectedImagePath);
+                imgView.setImageBitmap(photobmp);
+
+                //Codifica la imagen con Base64
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                photobmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] imageBytes = baos.toByteArray();
+                String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+                //Se ejecuta en segundo plano para no colgar la aplicacion
+                System.out.println("IMA BYT 2 " + encodedImage);
             } else {
                 super.onActivityResult(requestCode, resultCode,
                         data);
             }
+
         }
 
     }
