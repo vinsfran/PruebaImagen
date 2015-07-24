@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -33,17 +35,14 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         imgView = (ImageView) findViewById(R.id.imageView1);
+
         Button butCamera = (Button) findViewById(R.id.button1);
         butCamera.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                final Intent intent = new Intent(
-                        MediaStore.ACTION_IMAGE_CAPTURE);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        setImageUri());
-                startActivityForResult(intent, CAPTURE_IMAGE);
+                getPhotoDialog();
             }
         });
 
@@ -58,11 +57,41 @@ public class MainActivity extends ActionBarActivity {
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(
-                        Intent.createChooser(intent, ""),
-                        PICK_IMAGE);
+                startActivityForResult(Intent.createChooser(intent, ""), PICK_IMAGE);
             }
         });
+
+    }
+
+    private void getPhotoDialog() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("TITULO");
+            builder.setPositiveButton("Camara", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT,setImageUri());
+                    startActivityForResult(intent, CAPTURE_IMAGE);
+
+                }
+
+            });
+            builder.setNegativeButton("Galeria", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent();
+                    intent.setType("image/*");
+                    intent.setAction(Intent.ACTION_GET_CONTENT);
+                    startActivityForResult(Intent.createChooser(intent, ""), PICK_IMAGE);
+                }
+
+            });
+        builder.create().show();
+
+
 
     }
 
